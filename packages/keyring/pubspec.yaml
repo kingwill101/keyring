@@ -1,0 +1,16 @@
+name: keyring
+version: 1.0.0
+description: Cross-platform keyring package for Dart (umbrella)
+
+resolution: workspace
+environment:
+  sdk: ^3.12.1
+
+dependencies:
+  keyring_core: any
+  keyring_native: any
+  keyring_web: any
+
+dev_dependencies:
+  lints: ^6.0.0
+  test: ^1.25.6

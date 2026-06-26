@@ -1,0 +1,11 @@
+name: keyring_core
+version: 1.0.0
+description: Core API types and interfaces for the Dart keyring ecosystem
+
+resolution: workspace
+environment:
+  sdk: ^3.12.1
+
+dev_dependencies:
+  lints: ^6.0.0
+  test: ^1.25.6

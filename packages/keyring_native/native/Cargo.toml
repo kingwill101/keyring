@@ -1,0 +1,24 @@
+[package]
+name = "keyring-dart-native"
+version = "1.0.0"
+description = "Rust FFI wrapper for keyring ecosystem native stores"
+edition = "2024"
+rust-version = "1.88"
+
+[lib]
+crate-type = ["staticlib", "cdylib"]
+
+[dependencies]
+keyring-core = { path = "../../../third_party/keyring-core" }
+linux-keyutils-keyring-store = { path = "../../../third_party/linux-keyutils-keyring-store" }
+windows-native-keyring-store = { path = "../../../third_party/windows-native-keyring-store" }
+libc = "0.2"
+serde_json = "1"
+serde = "1"
+log = "0.4"
+
+[build-dependencies]
+cbindgen = "0.29.0"
+
+[patch.crates-io]
+keyring-core = { path = "../../../third_party/keyring-core" }
