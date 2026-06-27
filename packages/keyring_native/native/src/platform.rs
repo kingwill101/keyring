@@ -1,25 +1,49 @@
 use keyring_core::Result;
 use std::sync::Arc;
 
-type CredStore = keyring_core::api::CredentialStore;
-
-pub fn init() -> Result<Arc<CredStore>> {
-    #[cfg(target_os = "linux")]
+pub fn init() -> Result<Arc<keyring_core::api::CredentialStore>> {
+    #[cfg(target_os = "macos")]
     {
-        let store: Arc<CredStore> = linux_keyutils_keyring_store::Store::new()?;
-        Ok(store)
+        apple_native_keyring_store::Store::new()
     }
     #[cfg(target_os = "windows")]
     {
-        let store: Arc<CredStore> = windows_native_keyring_store::Store::new()?;
-        Ok(store)
+        windows_native_keyring_store::Store::new()
     }
-    #[cfg(target_os = "macos")]
+    #[cfg(target_os = "linux")]
     {
-        let store: Arc<CredStore> = keyring_core::mock::Store::new()?;
-        Ok(store)
+        zbus_secret_service_keyring_store::Store::new()
+            .map(|s| s as Arc<keyring_core::api::CredentialStore>)
+            .or_else(|_| {
+                dbus_secret_service_keyring_store::Store::new()
+                    .map(|s| s as Arc<keyring_core::api::CredentialStore>)
+            })
+            .or_else(|_| {
+                linux_keyutils_keyring_store::Store::new()
+                    .map(|s| s as Arc<keyring_core::api::CredentialStore>)
+            })
     }
-    #[cfg(not(any(target_os = "linux", target_os = "windows", target_os = "macos")))]
+    #[cfg(any(target_os = "freebsd", target_os = "openbsd"))]
+    {
+        zbus_secret_service_keyring_store::Store::new()
+            .map(|s| s as Arc<keyring_core::api::CredentialStore>)
+            .or_else(|_| {
+                dbus_secret_service_keyring_store::Store::new()
+                    .map(|s| s as Arc<keyring_core::api::CredentialStore>)
+            })
+    }
+    #[cfg(target_os = "ios")]
+    {
+        apple_native_keyring_store::Store::new()
+    }
+    #[cfg(not(any(
+        target_os = "linux",
+        target_os = "windows",
+        target_os = "macos",
+        target_os = "ios",
+        target_os = "freebsd",
+        target_os = "openbsd",
+    )))]
     {
         compile_error!("Unsupported target OS")
     }

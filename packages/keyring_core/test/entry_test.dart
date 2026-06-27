@@ -44,7 +44,9 @@ void main() {
     });
 
     test('non-const entries with same fields are not identical', () {
+      // ignore: prefer_const_constructors - intentionally non-const for identity check
       final a = KeyringEntry('app', 'user');
+      // ignore: prefer_const_constructors
       final b = KeyringEntry('app', 'user');
       expect(a, isNot(same(b)));
     });

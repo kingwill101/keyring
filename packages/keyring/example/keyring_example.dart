@@ -1,7 +1,8 @@
+// ignore_for_file: avoid_print
+
 import 'dart:io' show Platform;
 
 import 'package:keyring/keyring.dart';
-import 'package:keyring_core/keyring_core.dart';
 import 'package:keyring_native/keyring_native.dart';
 import 'package:keyring_web/keyring_web.dart';
 

@@ -1,6 +1,14 @@
 name: keyring
 version: 1.0.0
-description: Cross-platform keyring package for Dart (umbrella)
+description: Cross-platform keyring package for Dart (umbrella API)
+homepage: https://github.com/kingwill101/keyring
+repository: https://github.com/kingwill101/keyring
+issue_tracker: https://github.com/kingwill101/keyring/issues
+topics:
+  - keyring
+  - credentials
+  - security
+  - secrets
 
 resolution: workspace
 environment:

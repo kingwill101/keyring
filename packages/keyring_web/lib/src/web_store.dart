@@ -3,6 +3,10 @@ import 'dart:convert';
 
 import 'package:keyring_core/keyring_core.dart';
 
+/// An in-memory credential store for a single [KeyringEntry].
+///
+/// Each credential holds the binary [secret] bytes and a mutable
+/// [attributes] map.
 class _Credential {
   List<int> secret;
   Map<String, String> attributes;
@@ -11,6 +15,17 @@ class _Credential {
       : attributes = attributes ?? <String, String>{};
 }
 
+/// A [KeyringStore] backed by an in-memory hash map.
+///
+/// Suitable for web platforms where native secure storage is unavailable and
+/// for testing. Data does not persist between process restarts.
+///
+/// ```dart
+/// final store = WebKeyringStore();
+/// final entry = KeyringEntry('app', 'alice');
+/// await store.setPassword(entry, 's3cret');
+/// print(await store.getPassword(entry)); // s3cret
+/// ```
 class WebKeyringStore extends KeyringStore {
   final _store = HashMap<String, HashMap<String, _Credential>>();
 
@@ -58,8 +73,8 @@ class WebKeyringStore extends KeyringStore {
 
   @override
   Future<void> setSecret(KeyringEntry entry, List<int> secret) async {
-    final serviceUsers = _store.putIfAbsent(
-        entry.service, () => HashMap<String, _Credential>());
+    final serviceUsers =
+        _store.putIfAbsent(entry.service, () => HashMap<String, _Credential>());
     final existing = serviceUsers[entry.user];
     if (existing != null) {
       existing.secret = List.of(secret);

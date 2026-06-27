@@ -1,6 +1,16 @@
 name: keyring_native
 version: 1.0.0
 description: Native keyring implementation using Rust via native_toolchain_rust
+homepage: https://github.com/kingwill101/keyring
+repository: https://github.com/kingwill101/keyring
+issue_tracker: https://github.com/kingwill101/keyring/issues
+topics:
+  - keyring
+  - credentials
+  - security
+  - secrets
+  - native
+  - ffi
 
 resolution: workspace
 environment:

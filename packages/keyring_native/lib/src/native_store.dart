@@ -7,6 +7,7 @@ import 'package:keyring_core/keyring_core.dart';
 
 import 'ffi.g.dart';
 
+/// Converts a Rust error [code] and optional [context] into a [KeyringException].
 KeyringException _mapError(int code, Object? context) {
   final msgPtr = keyring_last_error_message();
   try {
@@ -19,6 +20,7 @@ KeyringException _mapError(int code, Object? context) {
   }
 }
 
+/// Maps an integer error [code] from the Rust FFI layer to a [KeyringErrorType].
 KeyringErrorType _codeToErrorType(int code) {
   switch (code) {
     case 1:
@@ -46,22 +48,45 @@ KeyringErrorType _codeToErrorType(int code) {
   }
 }
 
+/// Decodes a null-terminated C string [ptr] into a Dart [String].
+///
+/// Returns an empty string when [ptr] is `nullptr`.
 String _utf8(Pointer<Char> ptr) {
   if (ptr == nullptr) return '';
   var len = 0;
-  // strlen via memchr-style scan.
   while (ptr[len] != 0) {
     len++;
   }
   return utf8.decode(ptr.cast<Uint8>().asTypedList(len));
 }
 
+/// A [KeyringStore] backed by the Rust keyring FFI library.
+///
+/// Uses `native_toolchain_rust` to compile the native shared library
+/// (`libkeyring_dart_native.so` on Linux, `.dylib` on macOS, `.dll` on
+/// Windows) and communicates with it through auto-generated FFI bindings.
+///
+/// On Linux, the backend fallback chain is: Secret Service via `zbus` →
+/// Secret Service via `dbus` → Kernel Keyutils.
+///
+/// On macOS, the Apple Keychain is used. On Windows, the Credential Manager.
+///
+/// ```dart
+/// final store = NativeKeyringStore();
+/// final entry = KeyringEntry('app', 'alice');
+/// await store.setPassword(entry, 's3cret');
+/// ```
 class NativeKeyringStore extends KeyringStore {
+  /// Initializes the native keyring backend.
+  ///
+  /// Throws a [KeyringException] if the native library cannot be loaded or
+  /// no supported backend is available.
   NativeKeyringStore() {
     final code = keyring_init();
     if (code != 0) throw _mapError(code, 'init_failed');
   }
 
+  /// Returns the name of the active Rust backend, such as `"Secret Service"`.
   @override
   String get vendor {
     final ptr = keyring_store_vendor();
@@ -97,9 +122,9 @@ class NativeKeyringStore extends KeyringStore {
             .map((e) {
               final map = e as Map<String, dynamic>;
               return KeyringEntry(
-                    map['service'] as String,
-                    map['user'] as String,
-                  );
+                map['service'] as String,
+                map['user'] as String,
+              );
             })
             .toList();
       } finally {

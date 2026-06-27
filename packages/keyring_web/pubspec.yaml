@@ -1,6 +1,14 @@
 name: keyring_web
 version: 1.0.0
-description: Web keyring implementation using IndexedDB and Web Crypto
+description: In-memory keyring store for testing and non-native environments
+homepage: https://github.com/kingwill101/keyring
+repository: https://github.com/kingwill101/keyring
+issue_tracker: https://github.com/kingwill101/keyring/issues
+topics:
+  - keyring
+  - credentials
+  - testing
+  - in-memory
 
 resolution: workspace
 environment:

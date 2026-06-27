@@ -10,6 +10,7 @@ workspace:
   - packages/*
 
 dependencies:
+  artisanal: ^0.3.0
   hooks: ^2.0.2
   logging: ^1.3.0
   native_toolchain_rust: ^1.0.4+0
