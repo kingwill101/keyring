@@ -15,7 +15,7 @@ environment:
   sdk: ^3.12.1
 
 dependencies:
-  keyring_core: any
+  keyring_core: ^1.0.0
   crypto: ^3.0.3
 
 dev_dependencies:
